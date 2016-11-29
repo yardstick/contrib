@@ -61,6 +61,10 @@ func (k *keepalived) WriteCfg(svcs []vip) error {
 	defer w.Close()
 
 	k.vips = getVIPs(svcs)
+	j := os.Getenv("INSTANCE_ID")
+	if j == "" {
+		j = "50"
+	}
 
 	conf := make(map[string]interface{})
 	conf["iptablesChain"] = iptablesChain
@@ -72,6 +76,7 @@ func (k *keepalived) WriteCfg(svcs []vip) error {
 	conf["nodes"] = k.neighbors
 	conf["priority"] = k.priority
 	conf["useUnicast"] = k.useUnicast
+	conf["iid"] = j
 
 	if glog.V(2) {
 		b, _ := json.Marshal(conf)
